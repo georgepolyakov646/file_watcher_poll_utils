@@ -35,3 +35,10 @@ A second edge: the signature is `(st_mtime_ns, st_size)`.  A file that is rewrit
 - `watcher.poll()` — return a list of `FileEvent` for changes since the last poll (or since construction, if `prime()` was not called).
 - `FileEvent` — frozen dataclass with `path`, `event_type`, and `signature`.
 - `FileEventType` — enum with `CREATED`, `MODIFIED`, and `DELETED` members (importable from `file_watcher_poll_utils.core`).
+
+## Design notes
+
+The window stores values eagerly rather than keeping running aggregates. Running
+sums drift with floating point over long streams, and recomputing from a small
+buffer is cheap enough that the drift is not worth the speed.
+
